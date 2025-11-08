@@ -55,71 +55,62 @@ npm run start:dev
 
 
 
-Your backend will be accessible at `http://localhost:4000`.
+
+Backend API will run at `http://localhost:4000`.
 
 ---
 
-## 📚 API Overview
+## 📑 API Documentation (Swagger)
 
-### Authentication
-- Login endpoint issues JWT tokens.
-- Protect your endpoints by validating JWT in headers.
+> **Interactive docs available at:**  
+> [http://localhost:4000/api-docs](http://localhost:4000/api-docs)
 
-### Movie Endpoints
 
-- `POST /movies` - Create a movie (accepts multipart poster upload)
-- `GET /movies` - Paginated movie list
-- `GET /movies/user/:userId` - Movies owned by a user (paginated)
-- `GET /movies/:id` - Get movie details
-- `PATCH /movies/:id` - Update movie with optional poster
-- `DELETE /movies/:id` - Delete movie by ID
 
----
+## API Endpoints
 
-## 🛠 Architecture
+- `POST /auth/register` – Register new user
+- `POST /auth/login` – Login, receive JWT
 
-- **Controllers:** Define routes and request handling.
-- **Services:** Business logic and DB interactions.
-- **DTOs:** Data validation and transformation.
-- **Interceptors:** File upload handling with `@UseInterceptors(FileInterceptor)`.
-- **Models:** MongoDB schemas with Mongoose.
+- `POST /movies` – Create a movie (poster as file upload)
+- `GET /movies` – Get all movies paginated
+- `GET /movies/user/:userId` – Get user movies (paginated)
+- `GET /movies/:id` – Movie details
+- `PATCH /movies/:id` – Update movie (with poster upload)
+- `DELETE /movies/:id` – Delete movie
+
+All endpoints are documented interactively via Swagger.
 
 ---
 
-## 🎯 Key Modules
+## 🗄️ Architecture
 
-### MoviesService
-- Handles create, read, update, delete logic.
-- Converts uploaded posters to base64.
-
-### MoviesController
-- Routes requests to corresponding service methods.
-- Accepts multipart file uploads for posters.
-
----
-
-## 🔐 Security
-
-- Handle sensitive environment variables securely.
-- Validate and sanitize user inputs.
-- Protect routes with JWT guard (to be integrated with frontend).
+- **Controllers:** API endpoints.
+- **Services:** Business logic.
+- **DTOs:** Validation and transformation with class-validator.
+- **Interceptors:** For file upload with Multer.
+- **Models:** Mongoose schemas.
+- **Swagger:** Auto-API docs for quick reference and testing.
 
 ---
 
-## ⬆️ Contributing
+## 🛡️ Security
 
-Pull requests and issues welcome. Please follow standard Node.js and NestJS practices.
-
----
-
-## 📝 License
-
-MIT
+- Protect secrets and sensitive configs in `.env`.
+- Validate all inputs.
+- Protect endpoints with JWT guards.
+- File upload and DTO validation enabled.
 
 ---
 
-For detailed documentation on API endpoints, refer to the [Swagger/OpenAPI docs](link-to-docs-if-available).
+## 📝 Contributing
+
+PRs and issues welcome! Please follow NestJS code standards.
 
 ---
 
-This README outlines your backend’s core functionalities, usage, and setup instructions for a smooth developer experience and deployment.
+## MIT License
+
+---
+
+With Swagger, your API is self-documenting: simply build and run, then visit `/api-docs` for all routes, schemas, and examples.

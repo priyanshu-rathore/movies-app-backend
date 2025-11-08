@@ -11,22 +11,24 @@ import {
   BadRequestException,
   Query,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/CreateMovieDto';
 import { UpdateMovieDto } from './dto/UpdateMovieDto';
 
+@ApiTags('Movies')
 @Controller('movies')
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
-  // Create movie (poster as file, converted to Base64 here)
   @Post()
   @UseInterceptors(FileInterceptor('poster'))
+  @ApiOperation({ summary: 'Create a new movie' })
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({ status: 201, description: 'Movie created successfully.' })
   async create(@UploadedFile() file: Express.Multer.File, @Body() body: CreateMovieDto) {
-    const { title, publishingYear, user_id } = body;
-
-    if (!title || !publishingYear || !user_id) {
+    if (!body.title || !body.publishingYear || !body.user_id) {
       throw new BadRequestException('title, publishingYear, and user_id are required');
     }
 
@@ -39,13 +41,14 @@ export class MoviesController {
     return this.moviesService.create(body);
   }
 
-  // Paginated endpoints unchanged...
   @Get()
+  @ApiOperation({ summary: 'Get all movies paginated' })
   async findAll(@Query('page') page = 1, @Query('limit') limit = 8) {
     return this.moviesService.findAllPaginated(Number(page), Number(limit));
   }
 
   @Get('user/:userId')
+  @ApiOperation({ summary: 'Get all movies by user' })
   async findAllByUser(
     @Param('userId') userId: string,
     @Query('page') page = 1,
@@ -55,13 +58,15 @@ export class MoviesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  @ApiOperation({ summary: 'Get movie by ID' })
+  async findOne(@Param('id') id: string) {
     return this.moviesService.findOne(id);
   }
 
-  // MODIFIED UPDATE ENDPOINT TO ACCEPT FILE & UPDATE POSTER IF PROVIDED
   @Patch(':id')
   @UseInterceptors(FileInterceptor('poster'))
+  @ApiOperation({ summary: 'Update an existing movie' })
+  @ApiConsumes('multipart/form-data')
   async update(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
@@ -76,7 +81,8 @@ export class MoviesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @ApiOperation({ summary: 'Delete a movie' })
+  async remove(@Param('id') id: string) {
     return this.moviesService.remove(id);
   }
 }
